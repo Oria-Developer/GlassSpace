@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="softshadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+      <feOffset dx="3" dy="3" result="offset"/>
+      <feFlood flood-color="#000000" flood-opacity="0.25"/>
+      <feComposite in2="offset" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g transform="translate(120,120)" filter="url(#softshadow)">
+    <!-- continuous rope trefoil – drawn in correct over/under order so it reads as one single strand -->
+    <path d="M 0,-96 Q 96,-96 96,0 Q 96,96 0,96 Q -96,96 -96,0 Q -96,-96 0,-96 
+             Q 0,-48 48,-48 Q 96,0 48,48 Q 0,96 -48,48 Q -96,0 -48,-48 Q 0,-96 0,-48"
+          fill="none" stroke="#ff0000" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
