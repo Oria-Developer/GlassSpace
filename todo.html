@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlassSpace - To-Do</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e0f7e9 0%, #f0fdf4 100%);
+            color: #4a5568;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        /* Markdown Styles */
+        .markdown-body h1 { font-size: 1.5em; font-weight: bold; color: #2f855a; margin-bottom: 0.5em; }
+        .markdown-body h2 { font-size: 1.2em; font-weight: bold; color: #276749; margin-bottom: 0.5em; }
+        .markdown-body ul { list-style: disc; padding-left: 1.5em; margin-bottom: 1em; }
+        .markdown-body p { margin-bottom: 0.8em; }
+        
+        /* Unified View Styles */
+        #input-content, #preview { 
+            position: absolute; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            padding: 1.5rem; 
+            overflow-y: auto;
+        }
+        #input-content { z-index: 10; background: rgba(255,255,255,0.5); resize: none; font-family: monospace; }
+        #preview { z-index: 20; background: transparent; cursor: pointer; }
+        #preview:hover { background: rgba(255,255,255,0.2); }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: rgba(134, 239, 172, 0.8); border-radius: 4px; }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4 sm:p-8">
+
+    <div class="glass w-full max-w-7xl h-[90vh] flex rounded-2xl overflow-hidden relative">
+        
+        <!-- Sidebar -->
+        <div class="w-64 glass border-r border-white/50 flex flex-col bg-white/20 flex-shrink-0">
+            <div class="p-4 border-b border-white/50 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <a href="index.html" class="text-gray-500 hover:text-green-600 transition"><i class="fa-solid fa-arrow-left"></i></a>
+                    <span class="font-bold text-gray-700">Tasks</span>
+                </div>
+                <button onclick="createTask()" class="text-green-600 hover:bg-green-100 p-2 rounded-lg transition"><i class="fa-solid fa-plus"></i></button>
+            </div>
+            <div id="list" class="flex-1 overflow-y-auto p-2 space-y-1"></div>
+        </div>
+
+        <!-- Editor Area -->
+        <div class="flex-1 flex flex-col bg-white/30 relative">
+            <div id="empty-state" class="absolute inset-0 flex items-center justify-center text-gray-400 italic z-30">Select a task or create a new one</div>
+            
+            <div id="editor-ui" class="flex-1 flex flex-col hidden h-full">
+                <!-- Title Bar -->
+                <div class="border-b border-white/50 relative z-30 bg-white/20 backdrop-blur-sm flex justify-between items-center pr-4">
+                    <input type="text" id="input-title" placeholder="Task Title..." class="flex-1 bg-transparent p-6 text-2xl font-bold text-gray-800 placeholder-gray-400 focus:outline-none">
+                    <div class="text-xs text-gray-400 font-mono hidden sm:block">
+                        <span id="mode-indicator" class="mr-2 font-bold text-green-600">PREVIEW</span>
+                        [Ctrl+Shift+Alt+Y]
+                    </div>
+                </div>
+
+                <!-- Unified Editor/Preview -->
+                <div class="flex-1 flex overflow-hidden relative">
+                    <textarea id="input-content" class="focus:outline-none border-none hidden" placeholder="# Markdown Supported&#10;- List item 1&#10;- List item 2"></textarea>
+                    <div id="preview" class="markdown-body"></div>
+                </div>
+                
+                <!-- Footer -->
+                <div class="p-3 border-t border-white/50 flex justify-between bg-white/20 z-30">
+                    <button onclick="toggleView()" class="text-gray-500 hover:text-gray-700 text-xs px-2 py-1"><i class="fa-solid fa-eye"></i> Toggle View</button>
+                    <button onclick="deleteTask()" class="text-red-500 hover:bg-red-50 px-3 py-1 rounded text-sm transition">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DB_KEY = 'glass_workspace_db_v1';
+        let todos = [];
+        let activeId = null;
+        let isEditing = false; // Default: Preview Mode
+
+        function init() {
+            const data = JSON.parse(localStorage.getItem(DB_KEY) || '{"todo":[]}');
+            todos = data.todo || [];
+            renderList();
+        }
+
+        function save() {
+            const data = JSON.parse(localStorage.getItem(DB_KEY) || '{}');
+            data.todo = todos;
+            localStorage.setItem(DB_KEY, JSON.stringify(data));
+        }
+
+        function renderList() {
+            const list = document.getElementById('list');
+            list.innerHTML = '';
+            todos.forEach(t => {
+                const el = document.createElement('div');
+                el.className = `p-3 rounded-lg cursor-pointer text-sm font-medium transition truncate ${t.id === activeId ? 'bg-white shadow-sm text-green-700' : 'hover:bg-white/40 text-gray-600'}`;
+                el.innerText = t.title || '(Untitled)';
+                el.onclick = () => selectTask(t.id);
+                list.appendChild(el);
+            });
+        }
+
+        function createTask() {
+            const newTask = { id: Date.now().toString(), title: '', content: '' };
+            todos.unshift(newTask);
+            save();
+            selectTask(newTask.id);
+            // Auto edit mode for new
+            isEditing = true;
+            updateViewMode();
+        }
+
+        function selectTask(id) {
+            activeId = id;
+            const t = todos.find(x => x.id === id);
+            if(!t) return;
+
+            document.getElementById('empty-state').classList.add('hidden');
+            document.getElementById('editor-ui').classList.remove('hidden');
+
+            const titleIn = document.getElementById('input-title');
+            const contentIn = document.getElementById('input-content');
+            
+            titleIn.value = t.title;
+            contentIn.value = t.content;
+            
+            // Reset to Preview mode on selection
+            isEditing = false;
+            
+            renderPreview(t.content);
+            updateViewMode();
+            renderList();
+
+            titleIn.oninput = (e) => {
+                t.title = e.target.value;
+                save();
+                renderList();
+            };
+            contentIn.oninput = (e) => {
+                t.content = e.target.value;
+                save();
+                renderPreview(e.target.value);
+            };
+        }
+
+        function renderPreview(text) {
+            document.getElementById('preview').innerHTML = marked.parse(text || '');
+        }
+
+        function deleteTask() {
+            if(confirm('Delete this task?')) {
+                todos = todos.filter(x => x.id !== activeId);
+                activeId = null;
+                save();
+                renderList();
+                document.getElementById('editor-ui').classList.add('hidden');
+                document.getElementById('empty-state').classList.remove('hidden');
+            }
+        }
+
+        // --- Toggle Logic ---
+
+        function toggleView() {
+            isEditing = !isEditing;
+            updateViewMode();
+        }
+
+        function updateViewMode() {
+            const input = document.getElementById('input-content');
+            const preview = document.getElementById('preview');
+            const indicator = document.getElementById('mode-indicator');
+
+            if (isEditing) {
+                input.classList.remove('hidden');
+                preview.classList.add('hidden');
+                input.focus();
+                indicator.innerText = "EDIT MODE";
+                indicator.className = "mr-2 font-bold text-gray-500";
+            } else {
+                input.classList.add('hidden');
+                preview.classList.remove('hidden');
+                indicator.innerText = "PREVIEW";
+                indicator.className = "mr-2 font-bold text-green-600";
+            }
+        }
+
+        // Click preview to edit
+        document.getElementById('preview').addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') return;
+            isEditing = true;
+            updateViewMode();
+        });
+
+        // Key Shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.altKey && e.key.toLowerCase() === 'y') {
+                e.preventDefault();
+                toggleView();
+            }
+            if (isEditing && e.key === 'Escape') {
+                isEditing = false;
+                updateViewMode();
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>
