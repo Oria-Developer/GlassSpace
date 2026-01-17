@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glass Workspace - Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e0f7e9 0%, #f0fdf4 100%);
+            color: #4a5568;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 24px;
+        }
+        .glass-btn {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+        .glass-btn:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+            border-color: #86efac;
+        }
+    </style>
+</head>
+<body class="p-6">
+
+    <div class="glass max-w-4xl w-full p-10 sm:p-16 text-center animate-fade-in">
+        <div class="mb-10">
+            <div class="w-16 h-16 bg-green-400 rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-green-200 mb-6 text-white text-2xl">
+                <i class="fa-solid fa-leaf"></i>
+            </div>
+            <h1 class="text-4xl font-bold text-gray-800 mb-3">Welcome to GlassSpace</h1>
+            <p class="text-gray-500 max-w-lg mx-auto">Your minimalist, translucent workspace. Manage your projects, track your tasks, and keep your notes safe in one beautiful environment.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <a href="projects.html" class="glass-btn p-8 rounded-2xl group cursor-pointer block text-left">
+                <div class="bg-blue-100 text-blue-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-rocket text-xl"></i>
+                </div>
+                <h2 class="text-xl font-bold text-gray-800 mb-2">Projects</h2>
+                <p class="text-sm text-gray-500">Manage Discord bots, websites, and development status.</p>
+            </a>
+
+            <a href="todo.html" class="glass-btn p-8 rounded-2xl group cursor-pointer block text-left">
+                <div class="bg-green-100 text-green-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-check-circle text-xl"></i>
+                </div>
+                <h2 class="text-xl font-bold text-gray-800 mb-2">To-Do</h2>
+                <p class="text-sm text-gray-500">Track tasks with markdown support and simple lists.</p>
+            </a>
+
+            <a href="notes.html" class="glass-btn p-8 rounded-2xl group cursor-pointer block text-left">
+                <div class="bg-amber-100 text-amber-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-book-open text-xl"></i>
+                </div>
+                <h2 class="text-xl font-bold text-gray-800 mb-2">Notes & Keys</h2>
+                <p class="text-sm text-gray-500">Securely store API keys and documentation with highlighting.</p>
+            </a>
+        </div>
+
+        <div class="mt-12 text-xs text-gray-400">
+            &copy; 2024 GlassSpace • Data saved locally
+        </div>
+    </div>
+
+</body>
+</html>
