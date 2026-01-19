@@ -249,7 +249,7 @@
 
                     <!-- Footer -->
                     <div class="pt-8 flex justify-between items-center opacity-50">
-                        <span class="text-[9px] tracking-[0.2em] font-bold">Localy Saved (Only saved to your device)</span>
+                        <span class="text-[9px] tracking-[0.2em] font-bold">Locally Saved (Only saved to your device)</span>
                         <button onclick="deleteBot()" class="text-xs font-bold text-red-400 hover:text-red-300 transition-colors uppercase tracking-widest">
                             Delete Project
                         </button>
@@ -333,14 +333,17 @@
             const search = document.getElementById('search-input').value.toLowerCase();
             list.innerHTML = '';
             
-            bots.filter(b => b.name.toLowerCase().includes(search)).forEach(bot => {
+            const filteredBots = bots.filter(b => b.name.toLowerCase().includes(search));
+            
+            filteredBots.forEach((bot, index) => {
                 const isActive = bot.id === activeId;
                 const el = document.createElement('div');
                 el.className = `sidebar-item p-3 rounded-xl cursor-pointer border border-transparent flex items-center gap-3 mb-1 ${isActive ? 'active' : 'hover:bg-white/5 text-slate-400'}`;
                 
                 el.innerHTML = `
-                    <div class="w-8 h-8 rounded-lg bg-[#5865F2]/10 flex items-center justify-center text-sm text-[#5865F2]">
+                    <div class="w-8 h-8 rounded-lg bg-[#5865F2]/10 flex flex-col items-center justify-center text-[10px] text-[#5865F2] font-black">
                         <i class="fa-brands fa-discord"></i>
+                        <span class="mt-[-2px]">#${index + 1}</span>
                     </div>
                     <div class="flex-1 truncate">
                         <div class="font-bold text-xs truncate ${isActive ? 'text-[#5865F2]' : 'text-slate-200'}">${bot.name || 'Untitled Bot'}</div>
@@ -368,7 +371,6 @@
             selectBot(newBot.id);
         }
 
-        // Generates random text of a specific length
         function getScrambled(len) {
             let res = '';
             for (let i = 0; i < len; i++) {
@@ -416,9 +418,6 @@
         }
 
         function attachListeners(bot) {
-            const fields = ['bot-name', 'bot-description', 'bot-client-id', 'bot-client-invite', 'bot-client-auth'];
-            
-            // Standard fields
             ['bot-name', 'bot-description', 'bot-client-id', 'bot-invite', 'bot-auth'].forEach(id => {
                 const key = id.replace('bot-', '').replace(/-([a-z])/g, g => g[1].toUpperCase());
                 const el = document.getElementById(id);
@@ -430,7 +429,6 @@
                 };
             });
 
-            // Sensitive fields (Secret and Token)
             ['bot-client-secret', 'bot-token'].forEach(id => {
                 const key = id.replace('bot-', '').replace(/-([a-z])/g, g => g[1].toUpperCase());
                 const el = document.getElementById(id);
@@ -438,22 +436,15 @@
                 el.oninput = (e) => {
                     if (!isPrivacyOn) {
                         bot[key] = e.target.value;
-                    } else {
-                        // In privacy mode, we don't allow typing because we can't map random chars back to real keys reliably
-                        // But per user request, we want it to unblur and show scramble. 
-                        // To support typing while scrambled, we'd need a dual-value system.
                     }
                     save();
                 };
 
-                // Special handling for typing in privacy mode
                 el.onkeydown = (e) => {
                     if (isPrivacyOn) {
-                        // Capture the real key press and add it to the bot object silently
                         if (e.key.length === 1) {
                             bot[key] += e.key;
                             save();
-                            // Update display with one more scrambled char
                             el.value = getScrambled(bot[key].length);
                             e.preventDefault();
                         } else if (e.key === 'Backspace') {
