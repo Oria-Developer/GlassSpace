@@ -9,141 +9,115 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+        
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #e0f7e9 0%, #f0fdf4 100%);
-            color: #4a5568;
+            background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+            color: #1e293b;
             height: 100vh;
             overflow: hidden;
         }
+
         .glass {
-            background: rgba(255, 255, 255, 0.4);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
         }
+
+        /* Markdown Styling */
+        .markdown-body { line-height: 1.6; color: #334155; }
+        .markdown-body h1 { font-size: 2em; font-weight: 800; color: #0f172a; margin-bottom: 0.5em; border-bottom: 2px solid rgba(0,0,0,0.05); }
+        .markdown-body h2 { font-size: 1.5em; font-weight: 700; color: #1e293b; margin-top: 1em; }
+        .markdown-body p { margin-bottom: 1em; }
+        .markdown-body ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1em; }
         
-        /* Highlights */
-        .hl-api { background: #fed7aa; color: #9c4221; padding: 0 4px; border-radius: 4px; font-weight: 600; border: 1px solid #fbd38d; font-family: monospace; }
-        .hl-key { background: #bbf7d0; color: #166534; padding: 0 4px; border-radius: 4px; font-weight: 600; border: 1px solid #86efac; font-family: monospace; }
-        .hl-function { background: #e0e7ff; color: #3730a3; padding: 0 4px; border-radius: 4px; font-weight: 600; border: 1px solid #c7d2fe; font-family: monospace; }
-        .hl-warning { background: #fee2e2; color: #991b1b; padding: 0 4px; border-radius: 4px; font-weight: 600; border: 1px solid #fca5a5; }
-        .hl-variable { background: #fef9c3; color: #713f12; padding: 0 4px; border-radius: 4px; font-weight: 600; border: 1px solid #fde68a; font-family: monospace; }
-        .hl-note { background: #d1fae5; color: #065f46; padding: 0 4px; border-radius: 4px; font-weight: 600; border: 1px solid #a7f3d0; }
-        .hl-important { background: #fef2f2; color: #b91c1c; padding: 0 4px; border-radius: 4px; font-weight: 700; border: 1px solid #fecaca; }
-        .hl-link { background: #e0f2fe; color: #0c4a6e; padding: 0 4px; border-radius: 4px; font-weight: 500; border: 1px solid #bae6fd; text-decoration: underline; }
-
-        /* Enhanced Markdown Styling */
-        .markdown-body h1 { font-size: 1.75em; font-weight: bold; color: #d97706; margin-bottom: 0.5em; border-bottom: 2px solid rgba(217, 119, 6, 0.1); padding-bottom: 0.2em; }
-        .markdown-body h2 { font-size: 1.4em; font-weight: bold; color: #92400e; margin-top: 1.2em; margin-bottom: 0.5em; }
-        .markdown-body h3 { font-size: 1.2em; font-weight: 600; color: #b45309; margin-top: 1em; }
-        .markdown-body p { margin-bottom: 1em; line-height: 1.7; }
-        .markdown-body hr { border: 0; height: 2px; background: linear-gradient(to right, transparent, rgba(217, 119, 6, 0.2), transparent); margin: 2em 0; }
-        .markdown-body blockquote { border-left: 4px solid #fbbf24; padding: 0.5em 1em; background: rgba(251, 191, 36, 0.05); color: #52525b; font-style: italic; margin-bottom: 1em; border-radius: 0 4px 4px 0; }
-        
-        /* Lists */
-        .markdown-body ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1em; }
-        .markdown-body ol { list-style-type: decimal; padding-left: 1.5em; margin-bottom: 1em; }
-        .markdown-body li { margin-bottom: 0.25em; }
-        .markdown-body input[type="checkbox"] { margin-right: 0.5em; accent-color: #d97706; }
-
-        /* Tables */
-        .markdown-body table { border-collapse: collapse; width: 100%; margin: 1.5em 0; background: rgba(255,255,255,0.5); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-        .markdown-body th, .markdown-body td { border: 1px solid rgba(0,0,0,0.05); padding: 12px 15px; text-align: left; }
-        .markdown-body th { background: rgba(251, 191, 36, 0.15); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; color: #92400e; }
-        .markdown-body tr:nth-child(even) { background: rgba(255,255,255,0.3); }
-
-        /* Code */
-        .markdown-body pre { background: #1e293b; color: #e2e8f0; padding: 1.25em; border-radius: 8px; overflow-x: auto; margin-bottom: 1.5em; font-family: 'Fira Code', monospace; font-size: 0.9em; }
-        .markdown-body code { background: rgba(0,0,0,0.07); padding: 2px 5px; border-radius: 4px; font-family: monospace; font-size: 0.9em; color: #be123c; }
-        .markdown-body pre code { background: transparent; padding: 0; color: inherit; }
-
-        /* Layout Controls */
-        #input-content, #preview { 
-            position: absolute; 
-            top: 0; left: 0; 
-            width: 100%; height: 100%; 
-            padding: 2.5rem; 
+        #note-content, #note-preview {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            padding: 3rem;
             overflow-y: auto;
             border: none;
             outline: none;
+            background: transparent;
         }
-        #input-content { 
+        #note-content { 
             z-index: 10; 
-            background: rgba(255,255,255,0.8); 
-            resize: none; 
             font-family: 'Fira Code', monospace; 
-            font-size: 14px;
-            color: #2d3748;
+            font-size: 15px; 
             line-height: 1.8;
+            color: #334155;
+            resize: none;
         }
-        #preview { 
-            z-index: 20; 
-            background: transparent; 
-            cursor: text;
+        #note-preview { z-index: 20; }
+        
+        .sidebar-item {
+            transition: all 0.2s;
         }
-
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-thumb { background: rgba(251, 191, 36, 0.3); border-radius: 10px; }
-        ::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-item.active {
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            color: #1e293b;
+        }
     </style>
 </head>
-<body class="flex items-center justify-center p-4 sm:p-8">
+<body class="p-4 md:p-8">
 
-    <div class="glass w-full max-w-7xl h-[92vh] flex rounded-3xl overflow-hidden relative">
+    <div class="glass w-full h-[90vh] max-w-7xl mx-auto rounded-[2.5rem] overflow-hidden flex shadow-2xl">
         
-        <!-- Sidebar -->
-        <div class="w-72 glass border-r border-white/50 flex flex-col bg-white/10 flex-shrink-0">
-            <div class="p-6 border-b border-white/40 flex items-center justify-between bg-white/5">
-                <div class="flex items-center gap-3">
-                    <a href="index.html" class="text-gray-400 hover:text-amber-600 transition-all transform hover:scale-110"><i class="fa-solid fa-house"></i></a>
-                    <span class="font-bold text-gray-800 tracking-tight">Vault</span>
+        <!-- SIDEBAR -->
+        <div class="w-80 glass border-r border-white/40 flex flex-col bg-white/20">
+            <div class="p-6 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-xl font-black text-slate-800 tracking-tight">NOTES</h1>
+                    <button onclick="createNewNote()" class="p-2.5 rounded-xl bg-amber-500 text-white hover:scale-110 transition shadow-lg shadow-amber-500/20">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
                 </div>
-                <button onclick="createNote()" class="bg-amber-500/10 text-amber-600 hover:bg-amber-500 hover:text-white p-2.5 rounded-xl transition-all shadow-sm" title="New Note">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="search" placeholder="Search notes..." class="w-full bg-white/40 border-none rounded-xl py-2 pl-9 pr-4 text-xs focus:ring-2 focus:ring-amber-500/20 outline-none">
+                </div>
             </div>
-            <div id="list" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
+
+            <div id="list" class="flex-1 overflow-y-auto px-4 pb-4 space-y-1">
+                <!-- Notes list -->
+            </div>
+
+            <div class="p-6 border-t border-white/20">
+                <a href="index.html" class="text-xs font-bold text-slate-400 hover:text-slate-600 flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
         </div>
 
-        <!-- Editor Area -->
-        <div class="flex-1 flex flex-col bg-white/20 relative overflow-hidden">
-            <div id="empty-state" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 z-30 pointer-events-none text-center px-8">
-                <div class="w-16 h-16 bg-white/40 rounded-full flex items-center justify-center mb-4 text-2xl">
-                    <i class="fa-solid fa-feather-pointed"></i>
-                </div>
-                <p class="italic text-sm">Select a note to view or edit</p>
+        <!-- EDITOR -->
+        <div class="flex-1 flex flex-col relative bg-white/10">
+            <div id="empty-state" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 z-50 pointer-events-none opacity-60">
+                <i class="fa-solid fa-pen-nib text-5xl mb-4"></i>
+                <p class="font-medium">Select a note to start writing.</p>
             </div>
-            
-            <div id="editor-ui" class="flex-1 flex flex-col hidden h-full">
-                <!-- Title Bar -->
-                <div class="border-b border-white/40 relative z-40 bg-white/30 backdrop-blur-md flex justify-between items-center pr-6 shadow-sm">
-                    <input type="text" id="input-title" placeholder="Untitled Note" class="flex-1 bg-transparent p-6 text-2xl font-bold text-gray-800 placeholder-gray-300 focus:outline-none tracking-tight">
-                    <div class="flex flex-col items-end gap-1">
-                        <div id="mode-indicator" class="text-[10px] font-black text-amber-600 tracking-[0.2em] uppercase transition-all">Live Format ON</div>
-                        <div class="text-[9px] text-gray-400 font-mono hidden sm:block opacity-60">ESC to toggle view</div>
+
+            <div id="editor-view" class="hidden flex-1 flex flex-col h-full">
+                <div class="px-10 py-6 border-b border-white/30 flex justify-between items-center bg-white/20 backdrop-blur-md z-40">
+                    <input type="text" id="note-title" placeholder="Untitled Note" class="bg-transparent text-2xl font-black text-slate-800 focus:outline-none w-full">
+                    <div id="status-chip" class="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
+                        Preview Mode
                     </div>
                 </div>
-
-                <!-- Unified Editor/Preview -->
-                <div class="flex-1 overflow-hidden relative">
-                    <textarea id="input-content" class="hidden" spellcheck="false" placeholder="Start typing... 
-Use # for Headers
-Use ** for Bold
-Use --- for Horizontal Lines
-Use | Cell | for Tables"></textarea>
-                    <div id="preview" class="markdown-body"></div>
+                
+                <div class="flex-1 relative overflow-hidden">
+                    <textarea id="note-content" class="hidden" spellcheck="false"></textarea>
+                    <div id="note-preview" class="markdown-body"></div>
                 </div>
 
-                <!-- Footer -->
-                <div class="p-4 border-t border-white/40 flex justify-between items-center bg-white/30 z-40 backdrop-blur-sm">
-                    <div class="flex items-center gap-4">
-                        <button id="toggle-btn" onclick="toggleFormatting()" class="flex items-center gap-2 text-xs px-4 py-2 rounded-xl bg-amber-500 text-white shadow-lg shadow-amber-500/20 hover:bg-amber-600 transition-all font-semibold">
-                            <i id="toggle-icon" class="fa-solid fa-wand-magic-sparkles"></i> <span id="btn-text">Format Active</span>
-                        </button>
-                        <span class="text-[10px] text-gray-400 font-mono uppercase tracking-widest" id="char-count">0 chars</span>
-                    </div>
-                    <button onclick="deleteNote()" class="text-gray-400 hover:text-red-500 p-2 rounded-lg transition-colors" title="Delete Note">
+                <div class="p-6 border-t border-white/30 flex justify-between items-center bg-white/20 z-40">
+                    <button onclick="toggleView()" class="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-slate-800 text-white text-xs font-bold hover:bg-black transition-all shadow-lg shadow-slate-200">
+                        <i class="fa-solid fa-code"></i> Toggle Edit/Preview
+                    </button>
+                    <button onclick="deleteActive()" class="text-slate-400 hover:text-red-500 transition-colors p-2">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
                 </div>
@@ -152,185 +126,109 @@ Use | Cell | for Tables"></textarea>
     </div>
 
     <script>
-        const DB_KEY = 'glass_workspace_db_v1';
-        let notes = [];
-        let activeId = null;
-        let isFormattingActive = true; 
-        let isManualEdit = false;
+        const STORAGE_ID = 'glass_notes_v2';
+        let state = {
+            notes: [],
+            activeId: null,
+            isEditing: false
+        };
 
-        function init() {
-            const data = JSON.parse(localStorage.getItem(DB_KEY) || '{"notes":[]}');
-            notes = data.notes || [];
-            renderList();
+        function loadData() {
+            const raw = localStorage.getItem(STORAGE_ID);
+            if (raw) state.notes = JSON.parse(raw);
+            renderSidebar();
         }
 
-        function save() {
-            const data = JSON.parse(localStorage.getItem(DB_KEY) || '{}');
-            data.notes = notes;
-            localStorage.setItem(DB_KEY, JSON.stringify(data));
+        function saveData() {
+            localStorage.setItem(STORAGE_ID, JSON.stringify(state.notes));
         }
 
-        function renderList() {
+        function renderSidebar() {
             const list = document.getElementById('list');
             list.innerHTML = '';
-            notes.forEach(n => {
+            state.notes.forEach(note => {
+                const isActive = note.id === state.activeId;
                 const el = document.createElement('div');
-                el.className = `p-4 rounded-2xl cursor-pointer text-sm font-semibold transition-all truncate border border-transparent ${n.id === activeId ? 'bg-white shadow-md text-amber-700 border-white/50 scale-[1.02]' : 'hover:bg-white/40 text-gray-500'}`;
-                el.innerHTML = `<i class="fa-regular fa-file-lines mr-3 opacity-50"></i>${n.title || 'Untitled Note'}`;
-                el.onclick = () => selectNote(n.id);
+                el.className = `sidebar-item p-4 rounded-xl cursor-pointer text-sm font-bold truncate flex items-center gap-3 ${isActive ? 'active' : 'text-slate-500 hover:bg-white/40'}`;
+                el.innerHTML = `<i class="fa-regular fa-file-lines text-amber-500 opacity-60"></i> ${note.title || 'Untitled Note'}`;
+                el.onclick = () => selectNote(note.id);
                 list.appendChild(el);
             });
         }
 
-        function createNote() {
+        function createNewNote() {
             const newNote = { id: Date.now().toString(), title: '', content: '' };
-            notes.unshift(newNote);
-            save();
+            state.notes.unshift(newNote);
+            saveData();
             selectNote(newNote.id);
-            enterEdit();
+            startEditing();
         }
 
         function selectNote(id) {
-            activeId = id;
-            const n = notes.find(x => x.id === id);
-            if(!n) return;
+            state.activeId = id;
+            const note = state.notes.find(n => n.id === id);
+            if (!note) return;
 
             document.getElementById('empty-state').classList.add('hidden');
-            document.getElementById('editor-ui').classList.remove('hidden');
-
-            document.getElementById('input-title').value = n.title;
-            document.getElementById('input-content').value = n.content;
+            document.getElementById('editor-view').classList.remove('hidden');
+            document.getElementById('note-title').value = note.title;
+            document.getElementById('note-content').value = note.content;
             
-            isManualEdit = false;
-            updateView();
-            renderList();
+            state.isEditing = false;
+            updateUI();
+            renderSidebar();
 
-            document.getElementById('input-title').oninput = (e) => {
-                n.title = e.target.value;
-                save();
-                renderList();
+            document.getElementById('note-title').oninput = (e) => {
+                note.title = e.target.value;
+                saveData();
+                renderSidebar();
             };
-            document.getElementById('input-content').oninput = (e) => {
-                n.content = e.target.value;
-                document.getElementById('char-count').innerText = `${e.target.value.length} chars`;
-                save();
+            document.getElementById('note-content').oninput = (e) => {
+                note.content = e.target.value;
+                saveData();
             };
-            
-            renderPreview(n.content);
         }
 
-        function renderPreview(text) {
-            const preview = document.getElementById('preview');
-            if (!text) {
-                preview.innerHTML = '<div class="opacity-30 italic">Click here to start your masterpiece...</div>';
-                return;
-            }
+        function updateUI() {
+            const input = document.getElementById('note-content');
+            const preview = document.getElementById('note-preview');
+            const chip = document.getElementById('status-chip');
 
-            // GFM Table Support & Task Lists enabled by default in marked
-            let html = marked.parse(text, { gfm: true, breaks: true });
-
-            // Apply Custom Keyword Highlights
-            html = html.replace(/\b(API|Api|api)\b/g, '<span class="hl-api">$1</span>');
-            html = html.replace(/\b([A-Za-z0-9]{20,})\b/g, '<span class="hl-key">$1</span>');
-            html = html.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g, '<span class="hl-function">$1</span>');
-            html = html.replace(/`([a-zA-Z_][a-zA-Z0-9_]*)`/g, '<span class="hl-variable">$1</span>');
-            html = html.replace(/\b(WARNING|Error|Fail|Danger|STOP)\b/gi, '<span class="hl-warning">$1</span>');
-            html = html.replace(/\b(Note|NOTE|Hint|TIP)\b/g, '<span class="hl-note">$1</span>');
-            html = html.replace(/\b(IMPORTANT|Urgent|Critical|FIXME)\b/gi, '<span class="hl-important">$1</span>');
-            
-            // Clean Links (prevent double wrapping if marked already handled them)
-            html = html.replace(/(?<!href=")\b((https?:\/\/|www\.)[^\s<]+)/g, '<span class="hl-link">$1</span>');
-
-            preview.innerHTML = html;
-        }
-
-        function toggleFormatting() {
-            isFormattingActive = !isFormattingActive;
-            isManualEdit = false;
-            updateView();
-        }
-
-        function enterEdit() {
-            isManualEdit = true;
-            updateView();
-        }
-
-        function exitEdit() {
-            isManualEdit = false;
-            updateView();
-        }
-
-        function updateView() {
-            const input = document.getElementById('input-content');
-            const preview = document.getElementById('preview');
-            const indicator = document.getElementById('mode-indicator');
-            const toggleBtn = document.getElementById('toggle-btn');
-            const toggleIcon = document.getElementById('toggle-icon');
-            const btnText = document.getElementById('btn-text');
-
-            if (!isFormattingActive || isManualEdit) {
+            if (state.isEditing) {
                 input.classList.remove('hidden');
                 preview.classList.add('hidden');
                 input.focus();
-                
-                indicator.innerText = isFormattingActive ? "Direct Edit Mode" : "Formatting Paused";
-                indicator.style.color = "#94a3b8";
+                chip.innerText = "Editing Mode";
+                chip.className = "px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-widest";
             } else {
                 input.classList.add('hidden');
                 preview.classList.remove('hidden');
-                renderPreview(input.value);
-                
-                indicator.innerText = "Live Format ON";
-                indicator.style.color = "#d97706";
-            }
-
-            if (isFormattingActive) {
-                toggleBtn.className = "flex items-center gap-2 text-xs px-4 py-2 rounded-xl bg-amber-500 text-white shadow-lg shadow-amber-500/20 hover:bg-amber-600 transition-all font-semibold";
-                toggleIcon.className = "fa-solid fa-wand-magic-sparkles";
-                btnText.innerText = "Format Active";
-            } else {
-                toggleBtn.className = "flex items-center gap-2 text-xs px-4 py-2 rounded-xl bg-gray-200 text-gray-500 hover:bg-gray-300 transition-all font-semibold";
-                toggleIcon.className = "fa-solid fa-toggle-off";
-                btnText.innerText = "Format Paused";
+                preview.innerHTML = marked.parse(input.value || '*Click to write something...*');
+                chip.innerText = "Preview Mode";
+                chip.className = "px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-[10px] font-black uppercase tracking-widest";
             }
         }
 
-        function deleteNote() {
-            if(confirm('Permanently delete this note?')) {
-                notes = notes.filter(x => x.id !== activeId);
-                activeId = null;
-                save();
-                renderList();
-                document.getElementById('editor-ui').classList.add('hidden');
+        function toggleView() {
+            state.isEditing = !state.isEditing;
+            updateUI();
+        }
+
+        function startEditing() { state.isEditing = true; updateUI(); }
+
+        function deleteActive() {
+            if(confirm('Delete this note?')) {
+                state.notes = state.notes.filter(n => n.id !== state.activeId);
+                state.activeId = null;
+                saveData();
+                renderSidebar();
+                document.getElementById('editor-view').classList.add('hidden');
                 document.getElementById('empty-state').classList.remove('hidden');
             }
         }
 
-        document.getElementById('preview').addEventListener('click', (e) => {
-            // If user clicks a link, don't enter edit mode
-            if (e.target.closest('a') || e.target.classList.contains('hl-link')) return;
-            enterEdit();
-        });
-
-        document.getElementById('input-content').addEventListener('blur', () => {
-            if (isFormattingActive) {
-                exitEdit();
-            }
-        });
-
-        document.addEventListener('keydown', (e) => {
-            // Custom Key Shortcut Ctrl+M to toggle formatting
-            if (e.ctrlKey && e.key.toLowerCase() === 'm') {
-                e.preventDefault();
-                toggleFormatting();
-            }
-            // Escape to save and view formatted version
-            if (isManualEdit && e.key === 'Escape') {
-                exitEdit();
-            }
-        });
-
-        init();
+        document.getElementById('note-preview').onclick = startEditing;
+        loadData();
     </script>
 </body>
 </html>
