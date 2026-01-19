@@ -41,6 +41,7 @@
             border-radius: 1rem;
             padding: 1.25rem;
             transition: all 0.2s;
+            position: relative;
         }
 
         .bot-field-card:focus-within {
@@ -56,6 +57,28 @@
             font-size: 0.9rem;
             color: #e2e8f0;
             padding: 0.25rem 0;
+            transition: filter 0.3s ease, color 0.3s ease;
+        }
+
+        /* Privacy Logic: Scrambled Visuals */
+        .privacy-on .sensitive-field {
+            filter: blur(8px);
+            user-select: none;
+            cursor: pointer;
+        }
+
+        /* When hovering in privacy mode, we unblur but scramble the text via script */
+        .privacy-on .sensitive-field:hover,
+        .privacy-on .sensitive-field:focus {
+            filter: blur(0);
+            color: #ef4444; /* Alert color to show it's scrambled */
+            letter-spacing: 2px;
+        }
+
+        .privacy-off .sensitive-field {
+            filter: blur(0);
+            pointer-events: auto;
+            color: #e2e8f0;
         }
 
         .bot-input:focus {
@@ -76,11 +99,39 @@
         .bot-field-card:hover .copy-btn {
             opacity: 1;
         }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255,255,255,0.1);
+            transition: .4s;
+            border-radius: 20px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px; width: 14px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #5865F2; }
+        input:checked + .slider:before { transform: translateX(20px); }
     </style>
 </head>
 <body class="p-4 md:p-10">
 
-    <div class="glass w-full h-[85vh] max-w-7xl mx-auto rounded-[2.5rem] overflow-hidden flex">
+    <div id="main-container" class="glass w-full h-[85vh] max-w-7xl mx-auto rounded-[2.5rem] overflow-hidden flex privacy-on">
         
         <!-- SIDEBAR -->
         <div class="w-80 border-r border-white/5 flex flex-col bg-black/10">
@@ -93,6 +144,23 @@
                     <button onclick="createNewBot()" class="w-9 h-9 rounded-lg bg-white/5 hover:bg-[#5865F2] hover:text-white flex items-center justify-center transition-all shadow-lg" title="Add New Bot">
                         <i class="fa-solid fa-plus text-sm"></i>
                     </button>
+                </div>
+
+                <!-- Privacy Settings Area -->
+                <div class="p-4 bg-white/5 rounded-2xl border border-white/5">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Privacy Blur</span>
+                            <i class="fa-solid fa-shield-halved text-[10px] text-blue-400"></i>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="privacy-toggle" checked onchange="handlePrivacyToggle(this)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <p class="text-[9px] text-slate-500 leading-relaxed">
+                        Strict mode: Fields scramble while typing to prevent shoulder surfing.
+                    </p>
                 </div>
                 
                 <div class="relative">
@@ -147,18 +215,18 @@
 
                         <div class="bot-field-card">
                             <div class="flex justify-between items-center mb-1">
-                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Client Secret</label>
+                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-red-400">Client Secret</label>
                                 <button onclick="copyField('bot-client-secret')" class="copy-btn text-[10px] text-[#5865F2] font-bold hover:underline">Copy</button>
                             </div>
-                            <input type="password" id="bot-client-secret" class="bot-input" placeholder="••••••••••••••••">
+                            <input type="text" id="bot-client-secret" class="bot-input sensitive-field" placeholder="Secret Key">
                         </div>
 
                         <div class="md:col-span-2 bot-field-card">
                             <div class="flex justify-between items-center mb-1">
-                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Bot Token</label>
+                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-red-400">Bot Token</label>
                                 <button onclick="copyField('bot-token')" class="copy-btn text-[10px] text-[#5865F2] font-bold hover:underline">Copy</button>
                             </div>
-                            <input type="password" id="bot-token" class="bot-input" placeholder="MTAyMzQ1Njc4OTAxMjM0NTY3OQ.G1x2y3...">
+                            <input type="text" id="bot-token" class="bot-input sensitive-field" placeholder="MTAyMzQ1Njc4OTAxMjM0NTY3OQ.G1x2y3...">
                         </div>
 
                         <div class="bot-field-card">
@@ -192,15 +260,68 @@
         </div>
     </div>
 
+    <!-- Warning Modal -->
+    <div id="warning-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div class="glass max-w-sm w-full p-8 rounded-[2rem] text-center border-red-500/20">
+            <div class="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-red-500 text-2xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h2 class="text-xl font-bold mb-2">Reveal Keys?</h2>
+            <p class="text-sm text-slate-400 mb-8 leading-relaxed">
+                Disabling privacy mode will reveal all sensitive tokens in plain text. Only continue if you are in a private environment.
+            </p>
+            <div class="flex gap-3">
+                <button onclick="closeModal(false)" class="flex-1 py-3 rounded-xl bg-white/5 font-bold text-sm hover:bg-white/10 transition">Cancel</button>
+                <button onclick="closeModal(true)" class="flex-1 py-3 rounded-xl bg-red-500 text-white font-bold text-sm hover:bg-red-600 transition shadow-lg shadow-red-500/20">Reveal</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const DB_KEY = 'discord_bot_vault_v1';
         let bots = [];
         let activeId = null;
+        let isPrivacyOn = true;
+
+        const SCRAMBLE_CHARS = '!@#$%^&*()_+-=[]{}|;:,.<>?/0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
         function init() {
             const data = localStorage.getItem(DB_KEY);
             if (data) bots = JSON.parse(data);
             renderList();
+        }
+
+        function handlePrivacyToggle(checkbox) {
+            const container = document.getElementById('main-container');
+            if (!checkbox.checked) {
+                checkbox.checked = true;
+                document.getElementById('warning-modal').classList.remove('hidden');
+            } else {
+                isPrivacyOn = true;
+                container.classList.remove('privacy-off');
+                container.classList.add('privacy-on');
+                updateSensitiveDisplays();
+            }
+        }
+
+        function closeModal(confirmed) {
+            const modal = document.getElementById('warning-modal');
+            const checkbox = document.getElementById('privacy-toggle');
+            const container = document.getElementById('main-container');
+
+            if (confirmed) {
+                isPrivacyOn = false;
+                checkbox.checked = false;
+                container.classList.remove('privacy-on');
+                container.classList.add('privacy-off');
+            } else {
+                isPrivacyOn = true;
+                checkbox.checked = true;
+                container.classList.remove('privacy-off');
+                container.classList.add('privacy-on');
+            }
+            updateSensitiveDisplays();
+            modal.classList.add('hidden');
         }
 
         function save() {
@@ -247,6 +368,34 @@
             selectBot(newBot.id);
         }
 
+        // Generates random text of a specific length
+        function getScrambled(len) {
+            let res = '';
+            for (let i = 0; i < len; i++) {
+                res += SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+            }
+            return res;
+        }
+
+        function updateSensitiveDisplays() {
+            const bot = bots.find(b => b.id === activeId);
+            if (!bot) return;
+
+            const fields = [
+                { id: 'bot-client-secret', key: 'clientSecret' },
+                { id: 'bot-token', key: 'token' }
+            ];
+
+            fields.forEach(f => {
+                const input = document.getElementById(f.id);
+                if (isPrivacyOn) {
+                    input.value = getScrambled(bot[f.key].length || 20);
+                } else {
+                    input.value = bot[f.key];
+                }
+            });
+        }
+
         function selectBot(id) {
             activeId = id;
             const bot = bots.find(b => b.id === id);
@@ -258,37 +407,81 @@
             document.getElementById('bot-name').value = bot.name;
             document.getElementById('bot-description').value = bot.description;
             document.getElementById('bot-client-id').value = bot.clientId;
-            document.getElementById('bot-client-secret').value = bot.clientSecret;
-            document.getElementById('bot-token').value = bot.token;
             document.getElementById('bot-invite').value = bot.invite;
             document.getElementById('bot-auth').value = bot.auth;
 
+            updateSensitiveDisplays();
             renderList();
             attachListeners(bot);
         }
 
         function attachListeners(bot) {
-            const fields = ['bot-name', 'bot-description', 'bot-client-id', 'bot-client-secret', 'bot-token', 'bot-invite', 'bot-auth'];
-            fields.forEach(id => {
+            const fields = ['bot-name', 'bot-description', 'bot-client-id', 'bot-client-invite', 'bot-client-auth'];
+            
+            // Standard fields
+            ['bot-name', 'bot-description', 'bot-client-id', 'bot-invite', 'bot-auth'].forEach(id => {
                 const key = id.replace('bot-', '').replace(/-([a-z])/g, g => g[1].toUpperCase());
-                document.getElementById(id).oninput = (e) => {
+                const el = document.getElementById(id);
+                if(!el) return;
+                el.oninput = (e) => {
                     bot[key] = e.target.value;
                     save();
                     if (id === 'bot-name' || id === 'bot-client-id') renderList();
                 };
             });
+
+            // Sensitive fields (Secret and Token)
+            ['bot-client-secret', 'bot-token'].forEach(id => {
+                const key = id.replace('bot-', '').replace(/-([a-z])/g, g => g[1].toUpperCase());
+                const el = document.getElementById(id);
+                
+                el.oninput = (e) => {
+                    if (!isPrivacyOn) {
+                        bot[key] = e.target.value;
+                    } else {
+                        // In privacy mode, we don't allow typing because we can't map random chars back to real keys reliably
+                        // But per user request, we want it to unblur and show scramble. 
+                        // To support typing while scrambled, we'd need a dual-value system.
+                    }
+                    save();
+                };
+
+                // Special handling for typing in privacy mode
+                el.onkeydown = (e) => {
+                    if (isPrivacyOn) {
+                        // Capture the real key press and add it to the bot object silently
+                        if (e.key.length === 1) {
+                            bot[key] += e.key;
+                            save();
+                            // Update display with one more scrambled char
+                            el.value = getScrambled(bot[key].length);
+                            e.preventDefault();
+                        } else if (e.key === 'Backspace') {
+                            bot[key] = bot[key].slice(0, -1);
+                            save();
+                            el.value = getScrambled(bot[key].length);
+                            e.preventDefault();
+                        }
+                    }
+                }
+            });
         }
 
         function copyField(id) {
-            const input = document.getElementById(id);
-            const originalType = input.type;
-            if (originalType === 'password') input.type = 'text';
-            input.select();
-            document.execCommand('copy');
-            input.type = originalType;
-            window.getSelection().removeAllRanges();
+            const bot = bots.find(b => b.id === activeId);
+            if (!bot) return;
 
-            const btn = input.previousElementSibling.querySelector('.copy-btn');
+            const key = id.replace('bot-', '').replace(/-([a-z])/g, g => g[1].toUpperCase());
+            const valueToCopy = bot[key] || document.getElementById(id).value;
+            
+            const temp = document.createElement('textarea');
+            temp.value = valueToCopy;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+
+            const btn = document.getElementById(id).previousElementSibling.querySelector('.copy-btn');
             btn.innerText = 'Copied!';
             setTimeout(() => btn.innerText = 'Copy', 1500);
         }
