@@ -18,10 +18,10 @@
         }
 
         .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
@@ -30,53 +30,48 @@
         }
 
         .sidebar-item.active {
-            background: lch(50.1% 80.42 298.77 / 0.2);
-            border-color: rgba(82, 84, 231, 0.5);
-            color: #000000;
-            transform: translateX(4px);
+            background: rgba(88, 101, 242, 0.15);
+            border-color: rgba(88, 101, 242, 0.4);
+            color: #5865F2;
         }
 
         .bot-field-card {
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(15, 23, 42, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 1.25rem;
-            padding: 1.5rem;
-            transition: border-color 0.2s;
+            border-radius: 1rem;
+            padding: 1.25rem;
+            transition: all 0.2s;
         }
 
         .bot-field-card:focus-within {
-            border-color: #6366f1;
+            border-color: #5865F2;
+            background: rgba(15, 23, 42, 0.6);
         }
 
         .bot-input {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 0.75rem;
-            padding: 0.75rem 1rem;
+            background: transparent;
+            border: none;
             width: 100%;
             font-family: 'Fira Code', monospace;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
             color: #e2e8f0;
-            transition: all 0.2s;
+            padding: 0.25rem 0;
         }
 
         .bot-input:focus {
             outline: none;
-            background: rgba(0, 0, 0, 0.1);
-            border-color: #000000;
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
         }
 
-        .icon-blob {
-            filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.4));
+        .discord-glow {
+            filter: drop-shadow(0 0 15px rgba(88, 101, 242, 0.5));
         }
 
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
         
         .copy-btn {
-            opacity: 0;
-            transition: opacity 0.2s;
+            opacity: 0.4;
+            transition: all 0.2s;
         }
         .bot-field-card:hover .copy-btn {
             opacity: 1;
@@ -85,34 +80,35 @@
 </head>
 <body class="p-4 md:p-10">
 
-    <div class="glass w-full h-[85vh] max-w-7xl mx-auto rounded-[3rem] overflow-hidden flex">
+    <div class="glass w-full h-[85vh] max-w-7xl mx-auto rounded-[2.5rem] overflow-hidden flex">
         
         <!-- SIDEBAR -->
-        <div class="w-80 border-r border-white/5 flex flex-col bg-black/20">
+        <div class="w-80 border-r border-white/5 flex flex-col bg-black/10">
             <div class="p-8 space-y-6">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <div>
-                            <i class="fa-solid fa-key text-white"></i>
-                        </div>
-                        <h1 class="text-xl font-black tracking-tighter">Bot Keys</h1>
+                        <i class="fa-brands fa-discord text-[#5865F2] text-xl"></i>
+                        <h1 class="text-xl font-bold tracking-tight">Bot Vault</h1>
                     </div>
-                    <button onclick="createNewBot()" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition" title="Add New Bot">
-                        <i class="fa-solid fa-plus text-indigo-400"></i>
+                    <button onclick="createNewBot()" class="w-9 h-9 rounded-lg bg-white/5 hover:bg-[#5865F2] hover:text-white flex items-center justify-center transition-all shadow-lg" title="Add New Bot">
+                        <i class="fa-solid fa-plus text-sm"></i>
                     </button>
                 </div>
                 
                 <div class="relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
-                    <input type="text" placeholder="Search bots..." class="w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-xs focus:outline-none focus:border-indigo-500/50 transition">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                    <input type="text" id="search-input" oninput="renderList()" placeholder="Filter projects..." class="w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-xs focus:outline-none focus:border-[#5865F2]/50 transition">
                 </div>
             </div>
 
-            <div id="bot-list" class="flex-1 overflow-y-auto px-4 pb-6 space-y-2">
+            <div id="bot-list" class="flex-1 overflow-y-auto px-4 pb-6 space-y-1">
                 <!-- Bots injected here -->
             </div>
-            
-            <div>
+
+            <div class="p-6 border-t border-white/5">
+                <a href="index.html" class="text-[10px] font-bold text-slate-500 hover:text-slate-300 flex items-center gap-2 uppercase tracking-widest transition-colors">
+                    <i class="fa-solid fa-arrow-left"></i> Dashboard
+                </a>
             </div>
         </div>
 
@@ -120,90 +116,74 @@
         <div class="flex-1 flex flex-col relative">
             
             <div id="empty-state" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 z-50 pointer-events-none transition-opacity duration-300">
-                <div class="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mb-6">
-                    <i class="fa-solid fa-robot text-4xl opacity-20"></i>
-                </div>
-                <p class="font-semibold text-lg">No Bot Selected</p>
-                <p class="text-sm opacity-60">Create a new project to start managing keys.</p>
+                <i class="fa-brands fa-discord text-6xl opacity-10 mb-4"></i>
+                <p class="font-medium">Select a project</p>
             </div>
 
             <div id="editor-view" class="hidden flex-1 flex flex-col h-full overflow-y-auto">
-                <div class="p-12 max-w-4xl mx-auto w-full space-y-12">
+                <div class="p-12 max-w-3xl mx-auto w-full space-y-10">
                     
                     <!-- Header -->
-                    <div class="flex items-center gap-10">
-                        <div class="relative group">
-                            <div id="bot-icon-display" class="w-28 h-28 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[2.5rem] flex items-center justify-center text-5xl text-white shadow-2xl icon-blob">
-                                <i class="fa-solid fa-robot"></i>
-                            </div>
-                            <select onchange="updateIcon(this.value)" class="absolute inset-0 opacity-0 cursor-pointer">
-                                <option value="fa-robot">Robot</option>
-                                <option value="fa-ghost">Ghost</option>
-                                <option value="fa-bolt">Speed</option>
-                                <option value="fa-shield-halved">Shield</option>
-                                <option value="fa-gamepad">Gaming</option>
-                                <option value="fa-bug">Debug</option>
-                                <option value="fa-brain">AI</option>
-                            </select>
+                    <div class="flex items-center gap-8">
+                        <div class="w-24 h-24 bg-[#5865F2] rounded-3xl flex items-center justify-center text-5xl text-white shadow-2xl discord-glow">
+                            <i class="fa-brands fa-discord"></i>
                         </div>
-                        <div class="flex-1 space-y-3">
-                            <input type="text" id="bot-name" placeholder="Bot Display Name" class="bg-transparent text-5xl font-extrabold text-white focus:outline-none w-full border-b-4 border-transparent focus:border-indigo-500/30 transition-all pb-2 placeholder-white/10">
-                            <input type="text" id="bot-description" placeholder="Short project description..." class="bg-transparent text-slate-400 w-full focus:outline-none text-lg">
+                        <div class="flex-1 space-y-1">
+                            <input type="text" id="bot-name" placeholder="Project Name" class="bg-transparent text-4xl font-black text-white focus:outline-none w-full placeholder-white/5">
+                            <input type="text" id="bot-description" placeholder="Notes about this bot..." class="bg-transparent text-slate-400 w-full focus:outline-none text-sm">
                         </div>
                     </div>
 
                     <!-- Fields Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         
                         <div class="bot-field-card">
-                            <div class="flex justify-between items-center mb-3">
-                                <label class="text-[11px] font-bold text-indigo-400 uppercase tracking-widest">Client ID</label>
-                                <button onclick="copyField('bot-client-id')" class="copy-btn text-[10px] bg-white/5 hover:bg-white/10 px-2 py-1 rounded-md transition">Copy</button>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Client ID</label>
+                                <button onclick="copyField('bot-client-id')" class="copy-btn text-[10px] text-[#5865F2] font-bold hover:underline">Copy</button>
                             </div>
-                            <input type="text" id="bot-client-id" class="bot-input" placeholder="Application ID">
+                            <input type="text" id="bot-client-id" class="bot-input" placeholder="000000000000000000">
                         </div>
 
                         <div class="bot-field-card">
-                            <div class="flex justify-between items-center mb-3">
-                                <label class="text-[11px] font-bold text-indigo-400 uppercase tracking-widest">Client Secret</label>
-                                <button onclick="copyField('bot-client-secret')" class="copy-btn text-[10px] bg-white/5 hover:bg-white/10 px-2 py-1 rounded-md transition">Copy</button>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Client Secret</label>
+                                <button onclick="copyField('bot-client-secret')" class="copy-btn text-[10px] text-[#5865F2] font-bold hover:underline">Copy</button>
                             </div>
-                            <input type="password" id="bot-client-secret" class="bot-input" placeholder="Secret Key">
+                            <input type="password" id="bot-client-secret" class="bot-input" placeholder="••••••••••••••••">
                         </div>
 
-                        <div class="md:col-span-2 bot-field-card border-indigo-500/20">
-                            <div class="flex justify-between items-center mb-3">
-                                <label class="text-[11px] font-bold text-indigo-400 uppercase tracking-widest">Bot Token</label>
-                                <button onclick="copyField('bot-token')" class="copy-btn text-[10px] bg-white/5 hover:bg-white/10 px-2 py-1 rounded-md transition">Copy</button>
+                        <div class="md:col-span-2 bot-field-card">
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Bot Token</label>
+                                <button onclick="copyField('bot-token')" class="copy-btn text-[10px] text-[#5865F2] font-bold hover:underline">Copy</button>
                             </div>
-                            <input type="password" id="bot-token" class="bot-input" placeholder="Discord Bot Token">
-                        </div>
-
-                        <div class="bot-field-card">
-                            <div class="flex justify-between items-center mb-3">
-                                <label class="text-[11px] font-bold text-indigo-400 uppercase tracking-widest">Add to Server Link</label>
-                                <button onclick="copyField('bot-invite')" class="copy-btn text-[10px] bg-white/5 hover:bg-white/10 px-2 py-1 rounded-md transition">Copy</button>
-                            </div>
-                            <input type="text" id="bot-invite" class="bot-input" placeholder="OAuth2 Invite URL">
+                            <input type="password" id="bot-token" class="bot-input" placeholder="MTAyMzQ1Njc4OTAxMjM0NTY3OQ.G1x2y3...">
                         </div>
 
                         <div class="bot-field-card">
-                            <div class="flex justify-between items-center mb-3">
-                                <label class="text-[11px] font-bold text-indigo-400 uppercase tracking-widest">Authorize Account</label>
-                                <button onclick="copyField('bot-auth')" class="copy-btn text-[10px] bg-white/5 hover:bg-white/10 px-2 py-1 rounded-md transition">Copy</button>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Invite Link</label>
+                                <button onclick="copyField('bot-invite')" class="copy-btn text-[10px] text-[#5865F2] font-bold hover:underline">Copy</button>
                             </div>
-                            <input type="text" id="bot-auth" class="bot-input" placeholder="Dashboard or Auth Link">
+                            <input type="text" id="bot-invite" class="bot-input" placeholder="discord.com/oauth2/...">
+                        </div>
+
+                        <div class="bot-field-card">
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Redirect URI</label>
+                                <button onclick="copyField('bot-auth')" class="copy-btn text-[10px] text-[#5865F2] font-bold hover:underline">Copy</button>
+                            </div>
+                            <input type="text" id="bot-auth" class="bot-input" placeholder="http://localhost:3000">
                         </div>
 
                     </div>
 
                     <!-- Footer -->
-                    <div class="pt-10 flex justify-between items-center border-t border-white/5">
-                        <div class="text-[10px] text-slate-500 uppercase tracking-widest">
-                            Autosaved to LocalStorage
-                        </div>
-                        <button onclick="deleteBot()" class="px-6 py-2.5 rounded-xl text-red-400 hover:bg-red-400/10 transition-colors font-bold text-xs uppercase tracking-widest flex items-center gap-2">
-                            <i class="fa-solid fa-trash-can"></i> Destroy Project
+                    <div class="pt-8 flex justify-between items-center opacity-50">
+                        <span class="text-[9px] uppercase tracking-[0.2em] font-bold">Local Encrypted Cache</span>
+                        <button onclick="deleteBot()" class="text-xs font-bold text-red-400 hover:text-red-300 transition-colors uppercase tracking-widest">
+                            Delete Project
                         </button>
                     </div>
 
@@ -229,19 +209,21 @@
 
         function renderList() {
             const list = document.getElementById('bot-list');
+            const search = document.getElementById('search-input').value.toLowerCase();
             list.innerHTML = '';
-            bots.forEach(bot => {
+            
+            bots.filter(b => b.name.toLowerCase().includes(search)).forEach(bot => {
                 const isActive = bot.id === activeId;
                 const el = document.createElement('div');
-                el.className = `sidebar-item p-4 rounded-2xl cursor-pointer border border-transparent flex items-center gap-4 ${isActive ? 'active' : 'hover:bg-white/5 text-slate-400'}`;
+                el.className = `sidebar-item p-3 rounded-xl cursor-pointer border border-transparent flex items-center gap-3 mb-1 ${isActive ? 'active' : 'hover:bg-white/5 text-slate-400'}`;
                 
                 el.innerHTML = `
-                    <div class="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center text-lg">
-                        <i class="${bot.icon || 'fa-solid fa-robot'}"></i>
+                    <div class="w-8 h-8 rounded-lg bg-[#5865F2]/10 flex items-center justify-center text-sm text-[#5865F2]">
+                        <i class="fa-brands fa-discord"></i>
                     </div>
                     <div class="flex-1 truncate">
-                        <div class="font-bold text-sm truncate">${bot.name || 'Unnamed Bot'}</div>
-                        <div class="text-[10px] opacity-50 truncate">${bot.clientId || 'No Client ID'}</div>
+                        <div class="font-bold text-xs truncate ${isActive ? 'text-[#5865F2]' : 'text-slate-200'}">${bot.name || 'Untitled Bot'}</div>
+                        <div class="text-[9px] opacity-40 truncate font-mono">${bot.clientId || 'No ID'}</div>
                     </div>
                 `;
                 el.onclick = () => selectBot(bot.id);
@@ -258,8 +240,7 @@
                 clientSecret: '',
                 token: '',
                 invite: '',
-                auth: '',
-                icon: 'fa-solid fa-robot'
+                auth: ''
             };
             bots.unshift(newBot);
             save();
@@ -271,13 +252,9 @@
             const bot = bots.find(b => b.id === id);
             if (!bot) return;
 
-            document.getElementById('empty-state').classList.add('opacity-0');
-            setTimeout(() => {
-                document.getElementById('empty-state').classList.add('hidden');
-                document.getElementById('editor-view').classList.remove('hidden');
-            }, 300);
+            document.getElementById('empty-state').classList.add('hidden');
+            document.getElementById('editor-view').classList.remove('hidden');
 
-            // Populate fields
             document.getElementById('bot-name').value = bot.name;
             document.getElementById('bot-description').value = bot.description;
             document.getElementById('bot-client-id').value = bot.clientId;
@@ -285,73 +262,45 @@
             document.getElementById('bot-token').value = bot.token;
             document.getElementById('bot-invite').value = bot.invite;
             document.getElementById('bot-auth').value = bot.auth;
-            document.getElementById('bot-icon-display').innerHTML = `<i class="${bot.icon}"></i>`;
 
             renderList();
             attachListeners(bot);
         }
 
         function attachListeners(bot) {
-            const map = {
-                'bot-name': 'name',
-                'bot-description': 'description',
-                'bot-client-id': 'clientId',
-                'bot-client-secret': 'clientSecret',
-                'bot-token': 'token',
-                'bot-invite': 'invite',
-                'bot-auth': 'auth'
-            };
-
-            Object.entries(map).forEach(([elId, key]) => {
-                document.getElementById(elId).oninput = (e) => {
+            const fields = ['bot-name', 'bot-description', 'bot-client-id', 'bot-client-secret', 'bot-token', 'bot-invite', 'bot-auth'];
+            fields.forEach(id => {
+                const key = id.replace('bot-', '').replace(/-([a-z])/g, g => g[1].toUpperCase());
+                document.getElementById(id).oninput = (e) => {
                     bot[key] = e.target.value;
                     save();
-                    if (key === 'name' || key === 'clientId') renderList();
+                    if (id === 'bot-name' || id === 'bot-client-id') renderList();
                 };
             });
-        }
-
-        function updateIcon(icon) {
-            const bot = bots.find(b => b.id === activeId);
-            if (!bot) return;
-            bot.icon = `fa-solid ${icon}`;
-            document.getElementById('bot-icon-display').innerHTML = `<i class="${bot.icon}"></i>`;
-            save();
-            renderList();
         }
 
         function copyField(id) {
             const input = document.getElementById(id);
             const originalType = input.type;
-            
-            // Temporarily show password to copy if hidden
             if (originalType === 'password') input.type = 'text';
-            
             input.select();
             document.execCommand('copy');
-            
-            input.type = originalType; // Restore type
+            input.type = originalType;
+            window.getSelection().removeAllRanges();
 
-            // Visual feedback
             const btn = input.previousElementSibling.querySelector('.copy-btn');
-            const originalText = btn.innerText;
             btn.innerText = 'Copied!';
-            btn.classList.add('text-green-400');
-            setTimeout(() => {
-                btn.innerText = originalText;
-                btn.classList.remove('text-green-400');
-            }, 1500);
+            setTimeout(() => btn.innerText = 'Copy', 1500);
         }
 
         function deleteBot() {
-            if (confirm('Are you sure? All keys for this bot will be deleted forever.')) {
+            if (confirm('Destroy this project?')) {
                 bots = bots.filter(b => b.id !== activeId);
                 activeId = null;
                 save();
                 renderList();
                 document.getElementById('editor-view').classList.add('hidden');
                 document.getElementById('empty-state').classList.remove('hidden');
-                document.getElementById('empty-state').classList.remove('opacity-0');
             }
         }
 
